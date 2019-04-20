@@ -93,8 +93,8 @@ namespace EmptyASP.Controllers
                 var get = myContext.Suppliers.Find(Id);
                 if (get != null)
                 {
-                    get.IsDelete = true;
-                    myContext.Entry(get).State = EntityState.Modified;
+                    //get.IsDelete = true;
+                    myContext.Entry(get).State = EntityState.Deleted;
                     var result = myContext.SaveChanges();
                 }
                     

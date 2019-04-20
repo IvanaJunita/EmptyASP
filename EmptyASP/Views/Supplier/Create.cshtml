@@ -1,4 +1,5 @@
 ﻿@model EmptyASP.Models.Supplier
+@*@model IEnumerable<EmptyASP.Models.Supplier>*@
 
 @{
     ViewBag.Title = "Create";
@@ -6,26 +7,30 @@
 
 <h2>Create</h2>
 
-
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
-        <h4>Supplier</h4>
+        <h4>Suppliers</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+        @*@if (ViewBag.Message != null)
+        {
+            <span class="success sweet-alert"> @ViewBag.Message</span>
+        }
+        <br />*@ 
+        <div class="form-group" >
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" } )
+            <div class="col-md-10" id="nameSupplier">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @*@Id="NameSupplier"*@ } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" } )
             </div>
         </div>
 
-         <div class="form-group">
+        <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+               @Html.ActionLink("submit" ,"Create" , new { Id = "supplier.Id" }, new { @class = "create" })
             </div>
         </div>
     </div>
@@ -38,3 +43,73 @@
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script src="~/Scripts/jquery.validate.min.js"></script>
 <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<script src="~/Scripts/sweetalert2.min.js"></script>
+<link rel="stylesheet" href="~/Scripts/sweetalert2.css">
+<script type="text/javascript">
+      
+    ////////VANILLA JS VERSION
+    var createLinks = document.querySelectorAll('.create');               //get semua tag html dengan class create
+    for (var i = 0; i < createLinks.length; i++) {                    //untuk i=0 sampai i<jumlah tag html dengan class create
+        createLinks[i].addEventListener('click', function (event) {   //bind event click untuk tag html dengan class create ke i
+            event.preventDefault();                                   //mencegah link berfungsi secara normal
+            var supplierId = this.getAttribute('href');                   //ambil attribute href dari tag html dengan class create ke i
+            supplierId = supplierId.split("/");                               //hasilnya dipisah berdasarkan "/" (ex. /Supplier/create/4) => [0]="",[1]="Supplier",[2]="create",[3]=4
+            confirmFirst(supplierId[3]);                                  //panggil function dengan parameter supplierId[3] yaitu 4
+        });
+    };
+
+    //-
+    //////JQUERY VERSION
+    $(window).on('load', function () {                                      //saat page telah selesai terload
+        $('.create').on("click", function () {                          //bind event click ke semua tag dengan class create
+            event.preventDefault();                                     //mencegah link berfungsi secara normal
+            var link = $(this).attr('href');                            //ambil attribute href dari tag html dengan class create yang ditekan
+            var supplierId = link.split("/");                               //hasilnya dipisah berdasarkan "/" (ex. /Supplier/create/4) => [0]="",[1]="Supplier",[2]="create",[3]=4
+            confirmFirst(supplierId[3]);                                    //panggil function dengan parameter supplierId[3] yaitu 4
+        });
+    });
+
+    function confirmFirst(supplierId) {
+
+        Swal.fire({
+            position: 'top-end',
+            type: 'success',
+            title: 'Your work has been saved',
+            showConfirmButton: false,
+            timer: 1500
+        }).then((result) => {
+            if (result.value) {
+                $(document).ready(function () {
+                    $.ajax({
+                        url: "create/",
+                        type: "save",
+                        data: {
+                            id: supplierId
+                        },
+                        datatype: "html",
+                        success: function () {
+                            swal.fire("success!", "supplier" + supplierId + " telah ditambahkan", "success");
+                        },
+                        error: function (xhr, ajaxoptions, thrownerror) {
+                            swal.fire("error create!", "please try again", "error");
+                        }
+                    });
+                });
+            }
+        });
+    }
+
+    //$('#CreateSupplier').click(function (e) {
+    //    if ($('#NameSupplier').val() === "") {
+    //        sweetAlert("kolom tidak boleh kosong!!", "tolong tuliskan nama", "error");
+    //        alert("File Shouldn't Be Empty!!");  
+    //        return false;
+    //    }
+    //    if ($('#NameSupplier').val() !== "") {
+    //        sweetAlert("Congratulations!!", "You Uploaded A Valid", "success");
+    //        return false;
+    //    }
+    //});
+
+</script>

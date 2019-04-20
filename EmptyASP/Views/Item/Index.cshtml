@@ -1,4 +1,5 @@
-﻿@model IEnumerable<EmptyASP.Models.Item>
+﻿@*@model IEnumerable<EmptyASP.Models.Item>*@
+@model IEnumerable<EmptyASP.Models.Item>
 
 @{
     ViewBag.Title = "Index";
@@ -41,14 +42,13 @@
             @Html.DisplayFor(modelItem => item.supplier.Name)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id })|
             @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "delete" })  @* Tambahkan class delete agar bisa di "get" oleh JS *@
         </td>
     </tr>
 }
 
-</table>
 </table>
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script src="~/Scripts/jquery.validate.min.js"></script>
@@ -58,18 +58,31 @@
 <link rel="stylesheet" href="~/Scripts/sweetalert2.css">
 <script type="text/javascript">
 
-    var deleteLinks = document.querySelectorAll('.delete');
-    for (var i = 0; i < deleteLinks.length; i++) {
-        deleteLinks[i].addEventListener('click', function(event) {
-            event.preventDefault();
-            var itemId = this.getAttribute('Id');
-            confirmFirst(itemId);
+    //VANILLA JS VERSION
+    var deleteLinks = document.querySelectorAll('.delete');               //get semua tag html dengan class delete
+        for (var i = 0; i < deleteLinks.length; i++) {                    //untuk i=0 sampai i<jumlah tag html dengan class delete
+            deleteLinks[i].addEventListener('click', function (event) {   //bind event click untuk tag html dengan class delete ke i
+                event.preventDefault();                                   //mencegah link berfungsi secara normal
+                var itemId = this.getAttribute('href');                   //ambil attribute href dari tag html dengan class delete ke i
+                itemId = itemId.split("/");                               //hasilnya dipisah berdasarkan "/" (ex. /item/Delete/4) => [0]="",[1]="item",[2]="Delete",[3]=4
+                confirmFirst(itemId[3]);                                  //panggil function dengan parameter itemId[3] yaitu 4
+            });
+        };
+
+    //JQUERY VERSION
+    $(window).on('load', function () {                                      //saat page telah selesai terload
+            $('.delete').on("click", function () {                          //bind event click ke semua tag dengan class delete
+                event.preventDefault();                                     //mencegah link berfungsi secara normal
+                var link = $(this).attr('href');                            //ambil attribute href dari tag html dengan class delete yang ditekan
+                var itemId = link.split("/");                               //hasilnya dipisah berdasarkan "/" (ex. /item/Delete/4) => [0]="",[1]="item",[2]="Delete",[3]=4
+                confirmFirst(itemId[3]);                                    //panggil function dengan parameter itemId[3] yaitu 4
+            });
         });
-    }
+
 
     function confirmFirst(itemId) {
         Swal.fire({
-            title: 'Yakin ingin hapus item ini?',
+            title: 'sure you want to delete this item?',
             text: 'Lanjutkan?',
             type: 'warning',
             showCancelButton: true,
@@ -80,14 +93,14 @@
             if (result.value) {
                 $(document).ready(function () {
                     $.ajax({
-                        url: "Delete/"+itemId,
+                        url: "Delete/",
                         type: "POST",
                         data: {
                             Id: itemId
                         },
                         dataType: "html",
                         success: function () {
-                            Swal.fire("Berhasil!", "Item " + itemId + " telah dihapus", "success");
+                            Swal.fire("success", "Item " + itemId + " telah dihapus", "success");
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
                             Swal.fire("Error deleting!", "Please try again", "error");

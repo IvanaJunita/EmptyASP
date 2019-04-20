@@ -62,3 +62,54 @@
 <script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script src="~/Scripts/jquery.validate.min.js"></script>
 <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<script src="~/Scripts/sweetalert2.min.js"></script>
+<link rel="stylesheet" href="~/Scripts/sweetalert2.css">
+<script type="text/javascript">
+
+    //////VANILLA JS VERSION
+    var createLinks = document.querySelectorAll('.btn btn-default');               //get semua tag html dengan class delete
+    for (var i = 0; i < createLinks.length; i++) {                    //untuk i=0 sampai i<jumlah tag html dengan class delete
+        createLinks[i].addEventListener('click', function (event) {   //bind event click untuk tag html dengan class delete ke i
+            event.preventDefault();                                   //mencegah link berfungsi secara normal
+            var itemId = this.getAttribute('href');                   //ambil attribute href dari tag html dengan class delete ke i
+            itemId = itemId.split("/");                               //hasilnya dipisah berdasarkan "/" (ex. /Supplier/Delete/4) => [0]="",[1]="Supplier",[2]="Delete",[3]=4
+            confirmFirst(itemId[3]);                                  //panggil function dengan parameter itemId[3] yaitu 4
+        });
+    };
+
+
+    ////JQUERY VERSION
+    $(window).on('load', function () {                                      //saat page telah selesai terload
+        $('.create').on("click", function () {                          //bind event click ke semua tag dengan class delete
+            event.preventDefault();                                     //mencegah link berfungsi secara normal
+            var link = $(this).attr('href');                            //ambil attribute href dari tag html dengan class delete yang ditekan
+            var itemId = link.split("/");                               //hasilnya dipisah berdasarkan "/" (ex. /Supplier/Delete/4) => [0]="",[1]="Supplier",[2]="Delete",[3]=4
+            confirmFirst(itemId[3]);                                    //panggil function dengan parameter itemId[3] yaitu 4
+        });
+    });
+
+    function confirmFirst(itemId) {
+
+        Swal.fire({
+            position: 'top-end',
+            type: 'success',
+            title: 'Your work has been saved',
+            showConfirmButton: false,
+            timer: 1500
+        })
+    }
+    //$('#CreateName').click(function (e) {
+    //    if ($('#fileUpload').val() === "") {
+    //        sweetAlert("File Shouldn't Be Empty!!", "Please select file", "error");
+    //        //alert("File Shouldn't Be Empty!!");
+    //        return false;
+    //    }
+    //    if ($('#fileUpload').val() !== "") {
+    //        sweetAlert("Congratulations!!", "You Uploaded A Valid File", "success");
+    //        return false;
+    //    }
+    //});
+
+</script>
+

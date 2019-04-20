@@ -58,7 +58,6 @@ namespace EmptyASP.Controllers
                     };
                     myContext.Items.Add(item);
                     myContext.SaveChanges();
-                    TempData["message"] = "New Item Data added";
                     return RedirectToAction("Index");
                 }  
             }
@@ -102,7 +101,6 @@ namespace EmptyASP.Controllers
 
                     myContext.Entry(get).State = EntityState.Modified;
                     myContext.SaveChanges();
-                TempData["message"] = "New Item Data added";
                 return RedirectToAction("Index");
                 }
             return View();
@@ -125,7 +123,6 @@ namespace EmptyASP.Controllers
                 var get = myContext.Items.Find(Id);
                 myContext.Entry(get).State = EntityState.Deleted;
                 myContext.SaveChanges();
-                TempData["message"] = "Item " + Id + " has been updated";
                 return RedirectToAction("Index");
             }
              catch
